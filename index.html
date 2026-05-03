@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+    <div>
+        <p class="eyebrow">Internal Admin Tool</p>
+        <h1>Extract university course data from an official course page.</h1>
+        <p class="sub">
+            Paste a course URL. The tool will create a draft with tuition, IELTS, duration, intake,
+            application fee, deposit and entry requirement snippets. Always verify before saving.
+        </p>
+    </div>
+</section>
+
+<div class="card">
+    <form method="POST" class="form">
+        <label for="course_url">Official course page URL</label>
+        <input
+            id="course_url"
+            name="course_url"
+            type="url"
+            placeholder="https://www.example.ac.uk/courses/msc-management"
+            required
+        >
+        <button type="submit">Extract Data</button>
+    </form>
+</div>
+
+<div class="note">
+    Use official university websites. Avoid copying full databases from third-party platforms unless you have permission.
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head">
+    <div>
+        <h1>Saved Course Records</h1>
+        <p class="sub">Edit, verify, delete, or export your course database.</p>
+    </div>
+    <a class="button" href="{{ url_for('export_csv') }}">Export CSV</a>
+</div>
+
+<div class="table-card">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>University</th>
+                <th>Course</th>
+                <th>Tuition</th>
+                <th>IELTS</th>
+                <th>Status</th>
+                <th>Last Checked</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in courses %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.university_name }}</td>
+                <td>{{ c.course_name }}</td>
+                <td>{{ c.tuition_fee }}</td>
+                <td>{{ c.ielts_requirement }}</td>
+                <td><span class="status {{ c.verified_status }}">{{ c.verified_status }}</span></td>
+                <td>{{ c.last_checked }}</td>
+                <td><a href="{{ url_for('edit_course', course_id=c.id) }}">Edit</a></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="8">No records yet.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Extracted Draft Data</h1>
+<p class="sub">Review every field before saving. Low confidence fields need manual checking.</p>
+
+<form method="POST" action="{{ url_for('save') }}">
+    <input type="hidden" name="raw_confidence_json" value='{{ data.raw_confidence_json }}'>
+    <input type="hidden" name="raw_snippets_json" value='{{ data.raw_snippets_json }}'>
+
+    <div class="grid">
+        {% set fields = [
+            ('source_url','Source URL'),
+            ('university_name','University Name'),
+            ('course_name','Course Name'),
+            ('country','Country'),
+            ('level','Level'),
+            ('tuition_fee','Tuition Fee'),
+            ('currency','Currency'),
+            ('ielts_requirement','IELTS Requirement'),
+            ('pte_requirement','PTE Requirement'),
+            ('toefl_requirement','TOEFL Requirement'),
+            ('duration','Duration'),
+            ('intake','Intake'),
+            ('application_fee','Application Fee'),
+            ('deposit','Deposit'),
+            ('scholarship_info','Scholarship Info')
+        ] %}
+
+        {% for key, label in fields %}
+        <div class="field-card">
+            <div class="field-top">
+                <label>{{ label }}</label>
+                {% if data.confidence.get(key) %}
+                    <span class="badge {{ data.confidence.get(key)|lower }}">{{ data.confidence.get(key) }}</span>
+                {% endif %}
+            </div>
+
+            {% if key == 'source_url' %}
+                <input name="{{ key }}" value="{{ data.get(key, '') }}" readonly>
+            {% else %}
+                <input name="{{ key }}" value="{{ data.get(key, '') }}">
+            {% endif %}
+
+            {% if data.snippets.get(key) %}
+                <details>
+                    <summary>Source snippet</summary>
+                    <p>{{ data.snippets.get(key) }}</p>
+                </details>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="field-card full">
+        <div class="field-top">
+            <label>Entry Requirement Snippet</label>
+            <span class="badge {{ data.confidence.get('entry_requirement_snippet','low')|lower }}">
+                {{ data.confidence.get('entry_requirement_snippet','Low') }}
+            </span>
+        </div>
+        <textarea name="entry_requirement_snippet" rows="5">{{ data.entry_requirement_snippet }}</textarea>
+        {% if data.snippets.get('entry_requirement_snippet') %}
+            <details>
+                <summary>Source snippet</summary>
+                <p>{{ data.snippets.get('entry_requirement_snippet') }}</p>
+            </details>
+        {% endif %}
+    </div>
+
+    <div class="card actions">
+        <label>Status</label>
+        <select name="verified_status">
+            <option value="draft">Draft</option>
+            <option value="verified">Verified</option>
+        </select>
+        <button type="submit">Save Course</button>
+        <a class="button secondary" href="{{ url_for('index') }}">Try Another URL</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Edit Course</h1>
+<p class="sub">Verify the extracted fields before using them in your student matching database.</p>
+
+<form method="POST">
+    <div class="grid">
+        {% set fields = [
+            ('university_name','University Name'),
+            ('course_name','Course Name'),
+            ('country','Country'),
+            ('level','Level'),
+            ('tuition_fee','Tuition Fee'),
+            ('currency','Currency'),
+            ('ielts_requirement','IELTS Requirement'),
+            ('pte_requirement','PTE Requirement'),
+            ('toefl_requirement','TOEFL Requirement'),
+            ('duration','Duration'),
+            ('intake','Intake'),
+            ('application_fee','Application Fee'),
+            ('deposit','Deposit'),
+            ('scholarship_info','Scholarship Info')
+        ] %}
+
+        {% for key, label in fields %}
+        <div class="field-card">
+            <div class="field-top">
+                <label>{{ label }}</label>
+                {% if confidence.get(key) %}
+                    <span class="badge {{ confidence.get(key)|lower }}">{{ confidence.get(key) }}</span>
+                {% endif %}
+            </div>
+            <input name="{{ key }}" value="{{ course[key] or '' }}">
+            {% if snippets.get(key) %}
+                <details>
+                    <summary>Original source snippet</summary>
+                    <p>{{ snippets.get(key) }}</p>
+                </details>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="field-card full">
+        <label>Entry Requirement Snippet</label>
+        <textarea name="entry_requirement_snippet" rows="5">{{ course.entry_requirement_snippet or '' }}</textarea>
+    </div>
+
+    <div class="card">
+        <p><strong>Source URL:</strong> <a href="{{ course.source_url }}" target="_blank">{{ course.source_url }}</a></p>
+
+        <label>Status</label>
+        <select name="verified_status">
+            <option value="draft" {% if course.verified_status == 'draft' %}selected{% endif %}>Draft</option>
+            <option value="verified" {% if course.verified_status == 'verified' %}selected{% endif %}>Verified</option>
+        </select>
+
+        <div class="actions">
+            <button type="submit">Update Course</button>
+            <a class="button secondary" href="{{ url_for('records') }}">Back to Records</a>
+        </div>
+    </div>
+</form>
+
+<form method="POST" action="{{ url_for('delete', course_id=course.id) }}" onsubmit="return confirm('Delete this course?');">
+    <button class="danger" type="submit">Delete Course</button>
+</form>
+{% endblock %}
